@@ -7,6 +7,8 @@ import AgentDetail from './pages/AgentDetail';
 import Chat from './pages/Chat';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
+import Onboarding from './pages/Onboarding';
+import { api } from './api';
 
 function Sidebar({ onLogout }) {
   return (
@@ -50,18 +52,32 @@ function Sidebar({ onLogout }) {
 }
 
 export default function App() {
-  const [authed, setAuthed] = useState(null); // null = checking
+  const [authed, setAuthed] = useState(null);
+  const [needsOnboarding, setNeedsOnboarding] = useState(false);
 
-  useEffect(() => {
+  const checkAuth = () => {
     fetch('/api/auth/me', {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('agentbox_token') || ''}` }
     })
       .then(r => r.json())
       .then(d => setAuthed(d.authenticated))
       .catch(() => setAuthed(false));
-  }, []);
+  };
 
-  const handleLogin = () => setAuthed(true);
+  useEffect(() => { checkAuth(); }, []);
+
+  // Check if onboarding is needed after login
+  useEffect(() => {
+    if (authed) {
+      api.getSettings().then(s => {
+        if (!s.onboarding_complete) setNeedsOnboarding(true);
+      }).catch(() => {});
+    }
+  }, [authed]);
+
+  const handleLogin = () => { setAuthed(true); };
+
+  const handleOnboardingComplete = () => { setNeedsOnboarding(false); };
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', {
@@ -70,11 +86,14 @@ export default function App() {
     }).catch(() => {});
     localStorage.removeItem('agentbox_token');
     setAuthed(false);
+    setNeedsOnboarding(false);
   };
 
   if (authed === null) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-light)' }}>Loading...</div>;
 
   if (!authed) return <Login onLogin={handleLogin} />;
+
+  if (needsOnboarding) return <Onboarding onComplete={handleOnboardingComplete} />;
 
   return (
     <div className="app">
