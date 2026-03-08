@@ -1,10 +1,25 @@
 const BASE = '/api';
 
+function getToken() {
+  return localStorage.getItem('agentbox_token') || '';
+}
+
 async function request(path, options = {}) {
   const res = await fetch(`${BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json', ...options.headers },
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${getToken()}`,
+      ...options.headers,
+    },
     ...options,
   });
+
+  if (res.status === 401) {
+    localStorage.removeItem('agentbox_token');
+    window.location.reload();
+    throw new Error('Session expired');
+  }
+
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: res.statusText }));
     throw new Error(err.error || res.statusText);
