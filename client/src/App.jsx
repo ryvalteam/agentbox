@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard';
 import Knowledge from './pages/Knowledge';
 import Agents from './pages/Agents';
 import AgentDetail from './pages/AgentDetail';
+import Chat from './pages/Chat';
 import Settings from './pages/Settings';
 
 function Sidebar() {
@@ -18,12 +19,16 @@ function Sidebar() {
           <span className="nav-icon">&#9633;</span>
           <span>Dashboard</span>
         </NavLink>
+        <NavLink to="/chat">
+          <span className="nav-icon">&#128172;</span>
+          <span>Chat</span>
+        </NavLink>
         <NavLink to="/knowledge">
-          <span className="nav-icon">&#9881;</span>
+          <span className="nav-icon">&#128218;</span>
           <span>Knowledge</span>
         </NavLink>
         <NavLink to="/agents">
-          <span className="nav-icon">&#9881;</span>
+          <span className="nav-icon">&#129302;</span>
           <span>Agents</span>
         </NavLink>
         <NavLink to="/settings">
@@ -42,6 +47,7 @@ export default function App() {
       <main className="main">
         <Routes>
           <Route path="/" element={<Dashboard />} />
+          <Route path="/chat" element={<Chat />} />
           <Route path="/knowledge" element={<Knowledge />} />
           <Route path="/agents" element={<Agents />} />
           <Route path="/agents/:id" element={<AgentDetail />} />

@@ -7,6 +7,7 @@ const path = require('path');
 const agentsRouter = require('./routes/agents');
 const knowledgeRouter = require('./routes/knowledge');
 const settingsRouter = require('./routes/settings');
+const chatRouter = require('./routes/chat');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,6 +20,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use('/api/agents', agentsRouter);
 app.use('/api/knowledge', knowledgeRouter);
 app.use('/api/settings', settingsRouter);
+app.use('/api/chat', chatRouter);
 
 // Serve static frontend in production
 const clientDist = path.join(__dirname, '..', 'client', 'dist');
